@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>Click the button to open a new browser window.</p>
+
+<button onclick="myFunction()">Try it</button>
+
+<script>
+function myFunction() {
+
+    WebClient webClient = new WebClient();
+    HtmlPage page = webClient.getPage('http://speller.cs.pusan.ac.kr/PnuWebSpeller');
+    /*
+
+    var newWin = window.open('http://speller.cs.pusan.ac.kr/PnuWebSpeller');
+    var doc = newWin.document;
+    console.log(doc);
+    var input_box = doc.getElementById('tableMain');
+    alert(input_box);*/
+    /*
+    input_box.value = '안녕안녕 시험';
+
+    alert(input_box.value);
+    newWin.document.getElementById('btnCheck').click();
+    */
+}
+</script>
+
+</body>
+</html>
