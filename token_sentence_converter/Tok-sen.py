@@ -50,6 +50,15 @@ def __is_emoticon(chat):
 	return "이모티콘" in chat 
 def __is_short_reaction (chat):	
 	return len(set(chat))<3 
+def __remove_kk(chat):
+	tok_list = ["ㅋ","ㅎ","?","!",".","ㅠ","@","ㅐ","ㅣ",'~','^',"ㅠ_ㅠ",":)",";"\
+	"ㅛ","ㅜ", "ㄹ",":<"]
+	new_chat = chat 
+	for tok in tok_list:
+		new_chat = new_chat.replace(tok,"")
+	return new_chat
+	
+
 def as_it_is ():
 	chat_dict={}
 	prev_who = None
@@ -88,6 +97,7 @@ def as_it_is ():
 			
 			prev_who = who 
 	# last line 
+	
 	print(total)
 			
 #by_person_only ("../sample_data/chat2.txt")
