@@ -5,7 +5,7 @@ from hanspell import spell_checker as sc
 
 from lexrankr import LexRank
 
-class Preprocessor:
+class ChatSummarizer:
 
 	datapath = "./sample_data/"
 
@@ -14,7 +14,7 @@ class Preprocessor:
 		self.cw = CW_conv.Coinedword(file="./coined_word/coinedword_dic.txt") 
 		self.ts = TS_conv.Toksen(input_sentences)
 
-	def run(self):
+	def preprocess(self):
 
 		print ("running file:%s", self.fname)
 		print("connected as sentences ")
@@ -27,11 +27,18 @@ class Preprocessor:
 		sc_lines = [x.checked for x in sc_lines]
 
 		print("doing lexrank ")
-			
+	
+	def summarize(self, n_summary)
+		print("summarize in %d sentences" %n_summary)
 		lexrank = LexRank()
 		lexrank.summarize(" ".join(sc_lines))
-		summaries = lexrank.probe(4)  # `num_summaries` can be `None` (using auto-detected topics)
+		summaries = lexrank.probe(n_summary)  # `num_summaries` can be `None` (using auto-detected topics)
 		for summary in summaries:
 			print(summary)
 		return summaries
+
+	def highlight(self, threshold=0.5)
+		print("highlight : return list of chats and scores ")
+
+		
 
