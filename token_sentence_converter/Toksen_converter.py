@@ -32,6 +32,11 @@ def check_time(first, second):
 
 class Toksen:
 
+	
+	# idx of this list is sentence-index and elements of it is chat-index 
+	# and index start with zero
+	chat_to_sentence_mapping = [] 
+
 	def __init__(self, input_sentences):
 		self.input = [x.strip("\r").strip() for x in input_sentences.split("\n")]
 
@@ -48,6 +53,8 @@ class Toksen:
 			new_chat = new_chat.replace(tok,"")
 		return new_chat
 
+	def get_chat_to_sentence_mapping (self):
+		return self.chat_to_sentence_mapping
 	# -- tok-sen connecting methods : choose one 
 
 
@@ -90,8 +97,8 @@ class Toksen:
 		print (chat_dict)
 	
 	def by_time_connect(self):
-		f = open(self.fname,'r', encoding='utf-8')
-		original= f.readlines()
+		
+		original= self.input[:]
 		total = []
 		
 		for i in range(len(original)):
@@ -123,10 +130,12 @@ class Toksen:
 					#i+=1
 				#else:
 					#break
-			
+			chat_idxs_of_cur_sentence = [] 
 			for i in index_list:
 				message = original[i][2] +' '+ message
+				chat_idxs_of_cur_sentence.append(i)
 				original.pop(i)
+			self.chat_to_sentence_mapping.append(chat_idxs_of_cur_sentence)
 			message = message + ' .'
 			total.append(message)
 		
@@ -139,9 +148,13 @@ class Toksen:
 		prev_who = None
 		to_print = ""
 		total= []
-		
+		chat_idx = 0
+		#sentence_idx = 0 
+		chat_idxs_of_cur_sentence = []
+
 		for line in self.input :
 	
+
 			line = line.strip(" ").strip()
 			try :
 				who, when, what = line.split("]") 
@@ -161,16 +174,21 @@ class Toksen:
 						total.append(to_print )  
 					else :
 						total.append(to_print + ".")
+					self.chat_to_sentence_mapping.append(chat_idxs_of_cur_sentence)
+					chat_idxs_of_cur_sentence = [] 
 
 				to_print = what 
 
 			else :
 				to_print += " " + what 
+			chat_idxs_of_cur_sentence.append(chat_idx)
 			
 			prev_who = who 
-			
+			chat_idx += 1 
+
 		# last line 
 		total.append(to_print)
+		self.chat_to_sentence_mapping.append(chat_idxs_of_cur_sentence)
 		self.toksen = total 
 		return total 
 	

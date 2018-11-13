@@ -7,16 +7,15 @@ from lexrankr import LexRank
 
 class ChatSummarizer:
 
-	datapath = "./sample_data/"
+	preprocessed = None
+	summaries = None
 
 	def __init__(self, input_sentences):
-		self.fname = fname 
 		self.cw = CW_conv.Coinedword(file="./coined_word/coinedword_dic.txt") 
 		self.ts = TS_conv.Toksen(input_sentences)
 
 	def preprocess(self):
 
-		print ("running file:%s", self.fname)
 		print("connected as sentences ")
 
 		connected_lines = self.ts.as_it_is()
@@ -25,19 +24,20 @@ class ChatSummarizer:
 		sc_lines = [sc.check(x) for x in cw_lines]
 		
 		sc_lines = [x.checked for x in sc_lines]
-
+		self.preprocessed = sc_lines 
 		print("doing lexrank ")
 	
-	def summarize(self, n_summary)
+	def summarize(self, n_summary):
 		print("summarize in %d sentences" %n_summary)
 		lexrank = LexRank()
-		lexrank.summarize(" ".join(sc_lines))
+		lexrank.summarize(" ".join(self.preprocessed))
 		summaries = lexrank.probe(n_summary)  # `num_summaries` can be `None` (using auto-detected topics)
 		for summary in summaries:
 			print(summary)
+		self.summaries = summaries
 		return summaries
 
-	def highlight(self, threshold=0.5)
+	def highlight(self, threshold=0.5):
 		print("highlight : return list of chats and scores ")
 
 		
