@@ -31,7 +31,9 @@ class ChatSummarizer:
 		print("summarize in %d sentences" %n_summary)
 		lexrank = LexRank()
 		lexrank.summarize(" ".join(self.preprocessed))
-		summaries = lexrank.probe(n_summary)  # `num_summaries` can be `None` (using auto-detected topics)
+		summaries = lexrank.probe(n_summary)  
+		# `num_summaries` can be `None` (using auto-detected topics)
+		
 		for summary in summaries:
 			print(summary)
 		self.summaries = summaries

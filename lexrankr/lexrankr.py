@@ -190,6 +190,7 @@ class LexRank(object):
             pagerank = networkx.pagerank(graph, weight='weight')
             self.clusters[i] = sorted(pagerank, key=pagerank.get, reverse=True)
             self.graphs.append(graph)
+        #print("debug", self.clusters[0])
 
     def _sim_jaccard(self, sentence1, sentence2):
         if sentence1 == sentence2:
@@ -281,6 +282,9 @@ class LexRank(object):
     def _verbose(self):
         summaries = sorted(self.summaries, key=lambda sentence: sentence.index)
         return [sentence.text for sentence in summaries]
+
+    def sentence_score_pair(self):
+        pass 
 
     def probe(self, k=None):
         if not hasattr(self, 'clusters'):
