@@ -4,23 +4,45 @@
     <head>
         <meta charset="utf-8">
         <title>Chat Summarizer</title>
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-        <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+        <link rel="stylesheet" href="{% static 'css/chat_summarize.css' %}">
     </head>
     <body>
-        <div class="page-header">
-            <h1>Chat Summarizer</h1>
+        <div class="ui inverted menu">
+            <div class="header item">CS408 Team Goo</div>
+            <a class="item" href="#">Chat Summarizer</a>
         </div>
-        <div class="content container">
+        <div class="ui centered grid container" style="margin-top: 20px">
             <div class="row">
-                <div class="col-md-8">
-                        <div class="form-group">
-                            <label for="comment">Chat:</label>
-                            <textarea class="form-control" rows="5" id="comment"></textarea>
+                <div class="twelve wide column">
+                    <h1>Chat Summarizer</h1>
+                    <div class="ui divider"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="twelve wide column">
+                    <div class="ui form" style="margin-bottom: 20px">
+                        <div class="field">
+                            <label>Chat</label>
+                            <textarea rows="10"></textarea>
                         </div>
-                        <input type="submit" class="btn btn-primary" value="Summarize">
+                    </div>
+                    <button type="submit" class="ui primary right floated button">Summarize</button>
+                    <button class="ui basic right floated button">Clear</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="twelve wide column">
+                    <h1>Summary</h1>
+                    <div class="ui divider"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="twelve wide column" style="margin-bottom: 30px">
+                    <p>채팅 요약 첫 번째</p>
+                    <p>채팅 요약 두 번째</p>
+                    <p>채팅 요약 세 번째</p>
                 </div>
             </div>
         </div>
