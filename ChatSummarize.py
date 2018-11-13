@@ -42,9 +42,21 @@ class ChatSummarizer:
 	def highlight(self, threshold=0.5):
 		print("highlight : return list of chats and scores ")
 		lexrank = LexRank()
+		print(len(self.preprocessed), self.preprocessed)
 		lexrank.summarize(" ".join(self.preprocessed))
+		lexrank_sentences = [x.text for x in lexrank.sentences]
+		ts.produce_mapping(from_lexrank=lexrank_sentences)
+		
+		print(len(lexrank.sentences))
+
 		scores = lexrank.sentence_score_pair()  
-		print(scores)
+
+		# print(len(scores))
+		# print(len(self.ts.chat_to_sentence_mapping))
+		# print(scores)
+		threshold = 1/int(scores[-1][0]+1)
+
+
 
 
 		
