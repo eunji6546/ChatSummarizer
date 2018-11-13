@@ -1,12 +1,14 @@
+import os 
+import sys 
+
 class NoiseDetector:
-    def __init__(self, file="noise_dic.txt"):
+    def __init__(self, file="./noise_detector/noise_dic.txt"):
         self.dic = {}
         with open(file, 'r', encoding= 'UTF8') as f:
-            noises = f.readlines()
-            for noise in noises:
-                noise = noise.strip()
+            self.noises = f.readlines()
+            self.noises = [x.strip() for x in self.noises ] 
 
     def remove(self, text):
-        for noise in noises:
+        for noise in self.noises:
             text = text.replace(noise, ' ')
         return text
