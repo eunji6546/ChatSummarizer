@@ -185,12 +185,15 @@ class LexRank(object):
         if self.compactify:
             self._compactify()
         self.graphs = []
+        self.pageranks = [] 
         for i in range(self.num_clusters):
             graph = self.sentences2graph(self.clusters[i])
             pagerank = networkx.pagerank(graph, weight='weight')
+            self.pageranks.append(pagerank)
             self.clusters[i] = sorted(pagerank, key=pagerank.get, reverse=True)
             self.graphs.append(graph)
-        #print("debug", self.clusters[0])
+
+        
 
     def _sim_jaccard(self, sentence1, sentence2):
         if sentence1 == sentence2:
@@ -281,9 +284,45 @@ class LexRank(object):
 
     def _verbose(self):
         summaries = sorted(self.summaries, key=lambda sentence: sentence.index)
+        for elem in self.summaries :
+
+            print (elem.index, elem.tokens, elem.counter, elem.text)
         return [sentence.text for sentence in summaries]
 
     def sentence_score_pair(self):
+    
+        pairs=[] 
+        print("num cluster %d num sentence %d" %(self.num_clusters, self.num_sentences))
+        
+        #for p in self.prank_scores :
+        for p in self.pageranks: 
+            for k, v in p.items():
+                pairs.append((k.index, k.text, v))
+        
+        return pairs 
+
+    def __sentence_score_pair(self):
+
+        k = self.num_sentences
+        self.summaries = []
+        self.prank_scores = [] 
+        ends = np.array([len(cluster) for cluster in self.clusters])
+        drones = np.zeros(ends.shape)
+        for i in range(self.num_clusters):
+            self.summaries.append(self.clusters[i][0])
+            self.prank_scores.append(self.pageranks[i])
+            drones[i] += 1
+            if len(self.summaries) == k:
+                return self._score_pair()
+        while True:
+            branch = np.array([drones + 1, ends]).min(axis=0) / ends
+            leach = int(branch.argmin())
+            drone = int(drones[leach])
+            self.summaries.append(self.clusters[leach][drone])
+            drones[leach] += 1
+            if len(self.summaries) == k:
+                return self._score_pair()
+
         pass 
 
     def probe(self, k=None):
