@@ -9,15 +9,17 @@ class Preprocessor:
 
 	datapath = "./sample_data/"
 
-	def __init__(self, fname):
+	def __init__(self, input_sentences):
 		self.fname = fname 
 		self.cw = CW_conv.Coinedword(file="./coined_word/coinedword_dic.txt") 
-		self.ts = TS_conv.Toksen(self.datapath + self.fname)
+		self.ts = TS_conv.Toksen(input_sentences)
 
 	def run(self):
 
 		print ("running file:%s", self.fname)
 		print("connected as sentences ")
+
+		connected_lines = self.ts.as_it_is()
 		cw_lines = [self.cw.convert(x) for x in connected_lines]
 		print("spell checking ")
 		sc_lines = [sc.check(x) for x in cw_lines]
