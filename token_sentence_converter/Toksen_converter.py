@@ -1,6 +1,9 @@
 #-*-coding: utf-8
 import os 
 import sys 
+sys.path.append('../noise_detector')
+from noise_detector import noise_detec as ND
+
 #reload(sys)
 #sys.setdefaultencoding('utf-8') 
 
@@ -37,8 +40,14 @@ class Toksen:
 	# and index start with zero
 	chat_to_sentence_mapping = [] 
 
+	# Toksen-sentence, rexrank-sentence mapping 
+	toksen_to_lexrank_mapping=[] 
+
+
+
 	def __init__(self, input_sentences):
 		self.input = [x.strip("\r").strip() for x in input_sentences.split("\n")]
+		self.noise_detector = ND.NoiseDetector() 
 
 
 	def __is_emoticon(self, chat):
@@ -132,11 +141,11 @@ class Toksen:
 					#break
 			chat_idxs_of_cur_sentence = [] 
 			for i in index_list:
-				message = original[i][2] +' '+ message
+				message = self.noise_detector.remove( original[i][2]) +' '+ message
 				chat_idxs_of_cur_sentence.append(i)
 				original.pop(i)
 			self.chat_to_sentence_mapping.append(chat_idxs_of_cur_sentence)
-			message = message + ' .'
+			message = message.strip() + ' .'
 			total.append(message)
 		
 		f.close()
@@ -149,7 +158,7 @@ class Toksen:
 		to_print = ""
 		total= []
 		chat_idx = 0
-		#sentence_idx = 0 
+		sentence_idx = 0 
 		chat_idxs_of_cur_sentence = []
 
 		for line in self.input :
@@ -164,31 +173,39 @@ class Toksen:
 			who = who.strip(" [").strip("] ") 
 			when = when.strip(" [").strip("] ") 
 			what = what.strip()
+			what = self.noise_detector.remove(what)
 			#if self.__is_emoticon (what) or self.__is_short_reaction (what) : 
 			#	continue 
 			
 			if prev_who != who :
 				#print(to_print)
 				if prev_who != None and len(to_print) !=0 :
-					if to_print[-1] in ["?","!","."] :
-						total.append(to_print )  
-					else :
-						total.append(to_print + ".")
-					self.chat_to_sentence_mapping.append(chat_idxs_of_cur_sentence)
+					to_print = to_print.strip()
+					self.chat_to_sentence_mapping.append([sentence_idx, chat_idxs_of_cur_sentence,to_print])
 					chat_idxs_of_cur_sentence = [] 
+					sentence_idx +=1 
+					if len(to_print) >0 :
+						 
+						if to_print[-1] in ["?","!","."] :
+							total.append(to_print )  
+						else :
+							total.append(to_print + ".")
+					
 
 				to_print = what 
 
 			else :
 				to_print += " " + what 
+
 			chat_idxs_of_cur_sentence.append(chat_idx)
 			
 			prev_who = who 
 			chat_idx += 1 
 
 		# last line 
-		total.append(to_print)
-		self.chat_to_sentence_mapping.append(chat_idxs_of_cur_sentence)
+		if len(to_print) >0 : 
+			total.append(to_print.strip())
+		self.chat_to_sentence_mapping.append([sentence_idx, chat_idxs_of_cur_sentence, to_print])
 		self.toksen = total 
 		return total 
 	
