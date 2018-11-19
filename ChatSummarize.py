@@ -4,6 +4,7 @@ import os
 from hanspell import spell_checker as sc
 
 from lexrankr import LexRank
+import jpype
 
 class ChatSummarizer:
 
