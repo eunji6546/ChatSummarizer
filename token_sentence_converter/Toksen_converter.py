@@ -109,10 +109,13 @@ class Toksen:
 		
 		original= self.input[:]
 		total = []
-		
 		for i in range(len(original)):
 			new = []
 			splited = original[i].split(']', 2)
+			if(len(splited)<2):
+				original.pop(i)
+				break
+
 			splited[0] = splited[0].strip(' ')
 			splited[0] = splited[0].strip('[')
 			splited[1] = splited[1].strip(' ')
@@ -124,32 +127,56 @@ class Toksen:
 		    
 			original[i] = new
 		
-		while(len(original) != 0):
-			i = 1
-			index_list =[0]
-			message=""
-			while(i<len(original)-1 and check_time(original[i], original[0]) == 0):
-				if(check_name(original[0], original[i])):
-					index_list.insert(0,i)
+		sentence_idx =0
+		location = 0
+		visited=[]
+		while(location <len(original)):
+			i=1
+			index_list = [location]
+			visited.append(location)
+			message =""
+			while(i+location<len(original) and check_time(original[i+location], original[location]) == 0):
+				if(check_name(original[location], original[location+i])):
+					index_list.append(i+location)
+					visited.append(i+location)
 				i+=1
-			
-			#while(i<len(original)-1 and check_time(original[i], original[0]) ==1):
-				#if(check_name(original[0], original[i])):
-					#index_list.insert(0,i)
-					#i+=1
-				#else:
-					#break
-			chat_idxs_of_cur_sentence = [] 
+
 			for i in index_list:
-				message = self.noise_detector.remove( original[i][2]) +' '+ message
-				chat_idxs_of_cur_sentence.append(i)
-				original.pop(i)
-			self.chat_to_sentence_mapping.append(chat_idxs_of_cur_sentence)
-			message = message.strip() + ' .'
+				message = message + ' ' +self.noise_detector.remove(original[i][2]) 
+			
+			while location in visited:
+				location+=1
+
+			message = message.strip() + '.'
+			self.chat_to_sentence_mapping.append([sentence_idx,index_list,message])
 			total.append(message)
-		
-		f.close()
+			sentence_idx+=1
 		return total
+
+		# while(len(original) != 0):
+		# 	i = 1
+		# 	index_list =[0]
+		# 	message=""
+		# 	while(i<len(original)-1 and check_time(original[i], original[0]) == 0):
+		# 		if(check_name(original[0], original[i])):
+		# 			index_list.insert(0,i)
+		# 		i+=1
+			
+		# 	#while(i<len(original)-1 and check_time(original[i], original[0]) ==1):
+		# 		#if(check_name(original[0], original[i])):
+		# 			#index_list.insert(0,i)
+		# 			#i+=1
+		# 		#else:
+		# 			#break
+		# 	chat_idxs_of_cur_sentence = [] 
+		# 	for i in index_list:
+		# 		message = self.noise_detector.remove( original[i][2]) +' '+ message
+		# 		chat_idxs_of_cur_sentence.append(i)
+		# 		original.pop(i)
+		# 	message = message.strip() + '.'
+		# 	self.chat_to_sentence_mapping.append([sentence_idx,chat_idxs_of_cur_sentence,message])
+		# 	total.append(message)
+		# 	sentence_idx+=1
 		
 
 	def as_it_is (self):
@@ -205,8 +232,10 @@ class Toksen:
 		# last line 
 		if len(to_print) >0 : 
 			total.append(to_print.strip())
-		self.chat_to_sentence_mapping.append([sentence_idx, chat_idxs_of_cur_sentence, to_print])
-		self.toksen = total 
+		self.chat_to_sentence_mapping.append([sentence_idx, chat_idxs_of_cur_sentence, to_print+"."])
+		self.toksen = total
+		print(self.chat_to_sentence_mapping)
+		print(total) 
 		return total 
 	
 	

@@ -4,7 +4,7 @@ if __name__=="__main__":
 	for i in range(22):
 		if i == 0 or i == 1 or i == 4:
 			continue
-		with open("./sample_data/chat%d.txt" %i, 'r')as f:
+		with open("./sample_data/chat%d.txt" %i, 'r', encoding='utf-8-sig')as f:
 			lines = f.readlines()
 
 		input_sentences = "".join(lines)
