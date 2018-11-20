@@ -2,6 +2,7 @@ from coined_word import coinedword as CW_conv
 from token_sentence_converter import Toksen_converter as TS_conv
 import os
 from hanspell import spell_checker as sc
+from mactowin import mactowin
 
 from lexrankr import LexRank
 
@@ -12,13 +13,16 @@ class ChatSummarizer:
 
 	def __init__(self, input_sentences):
 		self.cw = CW_conv.Coinedword(file="./coined_word/coinedword_dic.txt") 
+		print("windows format change to mac format")
+		input_sentences = mactowin.MactoWin().convert(input_sentences)
 		self.ts = TS_conv.Toksen(input_sentences)
 
 	def preprocess(self):
 
 		print("connected as sentences ")
 
-		self.connected_lines = self.ts.as_it_is()
+		#self.connected_lines = self.ts.as_it_is()
+		self.connected_lines = self.ts.by_time_connect()
 		self.cw_lines = [self.cw.convert(x) for x in self.connected_lines]
 		print("spell checking ")
 		self.sc_lines = [sc.check(x) for x in self.cw_lines]

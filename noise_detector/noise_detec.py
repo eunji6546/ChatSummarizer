@@ -12,6 +12,6 @@ class NoiseDetector:
         for noise in self.noises:
             text = text.replace(noise, '')
             
-        if len(text)==1 : return ""
-        if len(text.split(" "))<3 : return ""
+        # if len(text)==1 : return ""
+        # if len(text.split(" "))<3 : return ""
         return text
