@@ -8,6 +8,8 @@ class Coinedword:
                 self.dic[split[0]] = split[1].strip()
 
     def convert(self, text):
-        for coined, meaning in self.dic.items():
+        words = sorted(self.dic.items(), reverse=True)
+        print (words)
+        for coined, meaning in words:
             text = text.replace(coined, meaning)
         return text

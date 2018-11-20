@@ -28,8 +28,8 @@ class httpRequestHandler(BaseHTTPRequestHandler):
         chatSummarizer = ChatSummarize.ChatSummarizer(post_data.decode('utf-8'))
         chatSummarizer.preprocess()
         summary = chatSummarizer.summarize(4)
-        print(summary)
-        self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
+        response = "callback(" + summary + ")"
+        self.wfile.write(response.encode('utf-8'))
         return
 
  
