@@ -9,7 +9,6 @@ class Coinedword:
 
     def convert(self, text):
         words = sorted(self.dic.items(), reverse=True)
-        print (words)
         for coined, meaning in words:
             text = text.replace(coined, meaning)
         return text
