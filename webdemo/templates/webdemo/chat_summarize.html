@@ -4,9 +4,9 @@
     <head>
         <meta charset="utf-8">
         <title>Chat Summarizer</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
-        <!-- <script type="text/javascript" src="{% static 'js/chat_summarize.js' %}"></script> -->
     </head>
     <body>
         <div class="ui inverted menu">
@@ -22,13 +22,14 @@
             </div>
             <div class="row">
                 <div class="twelve wide column">
-                    <form class="ui form" method="POST" style="margin-bottom: 20px">{% csrf_token %}
+                    <form class="ui form" method="GET" style="margin-bottom: 20px">
                         <div class="field">
-                            {{ form }}
-                            <!-- <textarea id="chatField" rows="10"></textarea> -->
+                            <!-- {{ form }} -->
+                            <textarea id="chatField" rows="10"></textarea>
                         </div>
-                        <button type="submit" class="ui primary right floated button">Summarize</button>
-                        <button type="button" class="ui basic right floated button" onclick="clearField();">Clear</button>
+                        <button type="submit" id="submitButton" class="ui primary right floated button">Summarize</button>
+                        <button type="button" id="clearButton" class="ui basic right floated button">Clear</button>
+                        <!-- <button type="button" id="clearButton" class="ui basic right floated button" onclick="clearField();">Clear</button> -->
                     </form>
                 </div>
             </div>
@@ -46,10 +47,21 @@
             </div>
             {% endif %}
         </div>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("#clearButton").click(function() {
+                    document.getElementById("chatField").value = "";
+                });
+                
+                $("#submitButton").click(function() {
+                    var chatData = document.getElementById("chatField").value;
+                    
+                    $.post("http://localhost:8080", chatData, function() {
+                        alert("Success!");
+                    });
+                });
+            });
+        </script>
+        <!-- <script type="text/javascript" src="{% static 'chat_summarize.js' %}"></script> -->
     </body>
-    <script type="text/javascript">
-        function clearField() {
-            document.getElementById("id_chat").value = ""
-        }
-    </script>
 </html>

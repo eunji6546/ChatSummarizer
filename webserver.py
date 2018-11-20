@@ -1,4 +1,5 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import ChatSummarize
  
 # HTTPRequestHandler class
 class httpRequestHandler(BaseHTTPRequestHandler):
@@ -10,6 +11,7 @@ class httpRequestHandler(BaseHTTPRequestHandler):
 
     # GET
     def do_GET(self):
+        print("GET request!!!")
         self.set_headers()
  
         # Send message back to client
@@ -21,6 +23,14 @@ class httpRequestHandler(BaseHTTPRequestHandler):
     # POST
     def do_POST(self):
         self.set_headers()
+        content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
+        post_data = self.rfile.read(content_length) # <--- Gets the data itself
+        chatSummarizer = ChatSummarize.ChatSummarizer(post_data.decode('utf-8'))
+        chatSummarizer.preprocess()
+        summary = chatSummarizer.summarize(4)
+        print(summary)
+        self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
+        return
 
  
 def run():
@@ -28,7 +38,7 @@ def run():
  
   # Server settings
   # Choose port 8080, for port 80, which is normally used for a http server, you need root access
-  server_address = ('127.0.0.1', 8081)
+  server_address = ('127.0.0.1', 8080)
   httpd = HTTPServer(server_address, httpRequestHandler)
   print('running server...')
   httpd.serve_forever()
