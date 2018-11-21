@@ -14,4 +14,6 @@ if __name__=="__main__":
 		print("preprocess done.")
 		#runner.summarize(4)
 		runner.highlight()
-		break
+		del (runner)
+
+		

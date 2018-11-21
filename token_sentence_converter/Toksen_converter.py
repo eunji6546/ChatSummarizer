@@ -107,6 +107,8 @@ class Toksen:
 	
 	def by_time_connect(self):
 		
+		self.chat_to_sentence_mapping = [] 
+
 		original= self.input[:]
 		total = []
 		for i in range(len(original)):
@@ -177,9 +179,10 @@ class Toksen:
 		# 	self.chat_to_sentence_mapping.append([sentence_idx,chat_idxs_of_cur_sentence,message])
 		# 	total.append(message)
 		# 	sentence_idx+=1
-		
+	
+	def as_it_is_addi_v(self):
 
-	def as_it_is (self):
+		self.chat_to_sentence_mapping = []
 		chat_dict={}
 		prev_who = None
 		to_print = ""
@@ -200,10 +203,37 @@ class Toksen:
 			who = who.strip(" [").strip("] ") 
 			when = when.strip(" [").strip("] ") 
 			what = what.strip()
-			what = self.noise_detector.remove(what)
-			#if self.__is_emoticon (what) or self.__is_short_reaction (what) : 
-			#	continue 
 			
+			if self.__is_emoticon (what) or self.__is_short_reaction (what) : 
+				print(what) 
+
+	def as_it_is (self):
+		self.chat_to_sentence_mapping = []
+		chat_dict={}
+		prev_who = None
+		to_print = ""
+		total= []
+		chat_idx = 0
+		sentence_idx = 0 
+		chat_idxs_of_cur_sentence = []
+
+		for line in self.input :
+	
+
+			line = line.strip(" ").strip()
+			try :
+				who, when, what = line.split("]") 
+			except:
+				# print("ELSE CASE : split ]") 
+				continue;
+			who = who.strip(" [").strip("] ") 
+			when = when.strip(" [").strip("] ") 
+			what = what.strip()
+			raw_what = what[:]	
+			what = self.noise_detector.remove(what)
+			
+			if self.__is_emoticon (raw_what) or self.__is_short_reaction (raw_what) : 
+				pass
 			if prev_who != who :
 				#print(to_print)
 				if prev_who != None and len(to_print) !=0 :
@@ -234,8 +264,7 @@ class Toksen:
 			total.append(to_print.strip())
 		self.chat_to_sentence_mapping.append([sentence_idx, chat_idxs_of_cur_sentence, to_print+"."])
 		self.toksen = total
-		print(self.chat_to_sentence_mapping)
-		print(total) 
+		
 		return total 
 	
 	
