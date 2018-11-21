@@ -14,12 +14,12 @@ def main():
 @app.route('/summarize', methods=['GET', 'POST'])
 def summarize():
     if request.method == 'POST':  # POST request
-        post_params = request.form
-        chat = post_params['chatField']
+        chat = request.form['chatField']
+        # chat = post_params['chatField']
         chatSummarizer = ChatSummarize.ChatSummarizer(chat)
         chatSummarizer.preprocess()
         summary = chatSummarizer.summarize(4)
-        return render_template('chat_summarizer.html', summary=summary)
+        return render_template('summarize.html', summary=summary)
 
     else: # GET request
         return render_template('chat_summarizer.html')
