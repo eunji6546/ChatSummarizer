@@ -1,4 +1,5 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import json
 import ChatSummarize
  
 # HTTPRequestHandler class
@@ -6,18 +7,26 @@ class httpRequestHandler(BaseHTTPRequestHandler):
  
     def set_headers(self):
         self.send_response(200)
-        self.send_header('Content-type', 'text/html')
+        # self.send_header('Content-type', 'text/html')
         self.end_headers()
 
     # GET
     def do_GET(self):
-        print("GET request!!!")
         self.set_headers()
- 
-        # Send message back to client
-        message = "Hello world!"
-        # Write content as utf-8 data
-        self.wfile.write(bytes(message, "utf8"))
+        path = self.path
+        print("**************************************************")
+        print(path.decode('utf-8'))
+        # content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
+        # get_data = self.rfile.read(content_length) # <--- Gets the data itself
+        # chatSummarizer = ChatSummarize.ChatSummarizer(get_data.decode('utf-8'))
+        # chatSummarizer.preprocess()
+        # summary = chatSummarizer.summarize(4)
+
+        # response = "callback(["
+        # for sentence in summary:
+        #     response += "'" + sentence + "', "
+        # response = response[:-2] + "])"
+        # self.wfile.write(response.encode('utf-8'))
         return
 
     # POST
@@ -28,7 +37,11 @@ class httpRequestHandler(BaseHTTPRequestHandler):
         chatSummarizer = ChatSummarize.ChatSummarizer(post_data.decode('utf-8'))
         chatSummarizer.preprocess()
         summary = chatSummarizer.summarize(4)
-        response = "callback(" + summary + ")"
+
+        response = "callback(["
+        for sentence in summary:
+            response += "'" + sentence + "', "
+        response = response[:-2] + "])"
         self.wfile.write(response.encode('utf-8'))
         return
 

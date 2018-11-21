@@ -1,0 +1,53 @@
+<html lang="ko">
+    <head>
+        <meta charset="utf-8">
+        <title>Chat Summarizer</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+        <!-- <script type="text/javascript" src="{% static 'js/chat_summarize.js' %}"></script> -->
+    </head>
+    <body>
+        <div class="ui inverted menu">
+            <div class="header item">CS408 Team Goo</div>
+            <a class="item" href="#">Chat Summarizer</a>
+        </div>
+        <div class="ui centered grid container" style="margin-top: 20px">
+            <div class="row">
+                <div class="twelve wide column">
+                    <h1>Chat Summarizer</h1>
+                    <div class="ui divider"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="twelve wide column">
+                    <form class="ui form" method="POST" style="margin-bottom: 20px">{% csrf_token %}
+                        <div class="field">
+                            {{ form }}
+                            <!-- <textarea id="chatField" rows="10"></textarea> -->
+                        </div>
+                        <button type="submit" class="ui primary right floated button">Summarize</button>
+                        <button type="button" class="ui basic right floated button" onclick="clearField();">Clear</button>
+                    </form>
+                </div>
+            </div>
+            {% if summary %}
+            <div class="row">
+                <div class="twelve wide column">
+                    <h1>Summary</h1>
+                    <div class="ui divider"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="twelve wide column" style="margin-bottom: 30px">
+                    <p>{{ summary }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </body>
+    <script type="text/javascript">
+        function clearField() {
+            document.getElementById("id_chat").value = ""
+        }
+    </script>
+</html>

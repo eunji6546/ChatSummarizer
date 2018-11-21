@@ -1,4 +1,4 @@
-{% load static %}
+{% load staticfiles %}
 
 <html lang="ko">
     <head>
@@ -42,12 +42,16 @@
             </div>
             <div class="row">
                 <div class="twelve wide column" style="margin-bottom: 30px">
-                    <p>{{ summary }}</p>
+                    <p id="summary">{{ summary }}</p>
                 </div>
             </div>
             {% endif %}
         </div>
         <script type="text/javascript">
+            function jsonpCallback(json) {
+                alert(json);
+            }
+
             $(document).ready(function() {
                 $("#clearButton").click(function() {
                     document.getElementById("chatField").value = "";
@@ -56,12 +60,26 @@
                 $("#submitButton").click(function() {
                     var chatData = document.getElementById("chatField").value;
                     
-                    $.post("http://localhost:8080", chatData, function() {
-                        alert("Success!");
+                    $.ajax({
+                        url: "http://localhost:8080/",
+                        type: "GET",
+                        data: "chat=" + chatData,
+                        dataType: "jsonp",
+                        jsonp:"callback",
+                        success: function (data) {
+                            // $("#summary").html(response.data);
+                            if (data != null) {
+                                alert(data);
+                            }
+                        },
                     });
+
+                    // $.post("http://localhost:8080", chatData, function(data) {
+                    //     $("#summary").html(data);
+                    // });
                 });
             });
         </script>
-        <!-- <script type="text/javascript" src="{% static 'chat_summarize.js' %}"></script> -->
+        <!-- <script type="text/javascript" src="{% static 'webdemo/chat_summarize.js' %}"></script> -->
     </body>
 </html>
