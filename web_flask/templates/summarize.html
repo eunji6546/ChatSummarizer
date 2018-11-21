@@ -1,0 +1,20 @@
+{% extends "chat_summarizer.html" %}
+{% block content %}
+
+<div class="row">
+    <div class="twelve wide column">
+        <h1>Summary</h1>
+        <div class="ui divider"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="twelve wide column" style="margin-bottom: 30px">
+        <ul>
+            {% for sentence in summary %}
+                <p>{{ sentence }}</p>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+{% endblock %}
