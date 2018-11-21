@@ -1,20 +1,16 @@
 {% extends "chat_summarizer.html" %}
 {% block content %}
 
-{% if summary %}
+{% if highlight %}
 <div class="row">
     <div class="twelve wide column">
-        <h1>Summary</h1>
+        <h1>Highlight</h1>
         <div class="ui divider"></div>
     </div>
 </div>
 <div class="row">
     <div class="twelve wide column" style="margin-bottom: 30px; font-size: 18px">
-        <ul>
-            {% for sentence in summary %}
-                <li style="margin-bottom: 10px">{{ sentence }}</li>
-            {% endfor %}
-        </ul>
+       
     </div>
 </div>
 {% endif %}

@@ -11,18 +11,32 @@ app = Flask(__name__)
 def main():
     return render_template('chat_summarizer.html')
 
+
 @app.route('/summarize', methods=['GET', 'POST'])
 def summarize():
     if request.method == 'POST':  # POST request
         chat = request.form['chatField']
-        # chat = post_params['chatField']
         chatSummarizer = ChatSummarize.ChatSummarizer(chat)
         chatSummarizer.preprocess()
         summary = chatSummarizer.summarize(4)
         return render_template('summarize.html', summary=summary)
 
     else: # GET request
-        return render_template('chat_summarizer.html')
+        return render_template('summarize.html')
+
+
+@app.route('/highlight', methods=['GET', 'POST'])
+def highlight():
+    if request.method == 'POST':  # POST request
+        chat = request.form['chatField']
+        chatSummarizer = ChatSummarize.ChatSummarizer(chat)
+        chatSummarizer.preprocess()
+        highlight = chatSummarizer.highlight()
+        return render_template('highlight.html', highlight=highlight)
+
+    else: # GET request
+        return render_template('highlight.html')
+
 
 if __name__ == '__main__':
     app.run()
