@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def main():
-    return render_template('chat_summarizer.html')
+    return render_template('summarize.html')
 
 
 @app.route('/summarize', methods=['GET', 'POST'])

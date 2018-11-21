@@ -1,6 +1,19 @@
 {% extends "chat_summarizer.html" %}
 {% block content %}
 
+<div class="row">
+    <div class="twelve wide column">
+        <form class="ui form" method="POST" action="summarize" role="form" style="margin-bottom: 20px">
+            <div class="field">
+                <label for="chatField">Chat</label>
+                <textarea id="chatField" name="chatField" rows="10"></textarea>
+            </div>
+            <input type="submit" value="Summarize" id="submitButton" class="ui primary right floated button"/>
+            <button type="button" id="clearButton" class="ui basic right floated button" onclick="clearField();">Clear</button>
+        </form>
+    </div>
+</div>
+
 {% if summary %}
 <div class="row">
     <div class="twelve wide column">
