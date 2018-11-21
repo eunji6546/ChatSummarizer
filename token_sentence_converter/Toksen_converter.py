@@ -67,7 +67,6 @@ class Toksen:
 	# -- tok-sen connecting methods : choose one 
 
 
-
 	def by_person_only(self) :
 		"""
 		input : filename to read
@@ -137,17 +136,36 @@ class Toksen:
 			index_list = [location]
 			visited.append(location)
 			message =""
+			count =0
+			
 			while(i+location<len(original) and check_time(original[i+location], original[location]) == 0):
 				if(check_name(original[location], original[location+i])):
 					index_list.append(i+location)
 					visited.append(i+location)
+					count=0;
+				else:
+					count+=1
+				
+				if count>=3:
+					break
 				i+=1
+
+			# while(i+location<len(original) and check_time(original[i+location], original[location]) ==1):
+			# 	if(check_name(original[0], original[i+location])):
+			# 		index_list.append(i+location)
+			# 		visited.append(i+location)
+			# 		i+=1
+			# 	else:
+			# 		break
 
 			for i in index_list:
 				message = message + ' ' +self.noise_detector.remove(original[i][2]) 
 			
 			while location in visited:
 				location+=1
+
+			if(message.strip() == ""):
+				continue
 
 			message = message.strip() + '.'
 			self.chat_to_sentence_mapping.append([sentence_idx,index_list,message])
