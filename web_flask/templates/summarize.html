@@ -1,0 +1,35 @@
+{% extends "chat_summarizer.html" %}
+{% block content %}
+
+<div class="row">
+    <div class="twelve wide column">
+        <form class="ui form" method="POST" action="summarize" role="form" style="margin-bottom: 20px">
+            <div class="field">
+                <label for="chatField">Chat</label>
+                <textarea id="chatField" name="chatField" rows="10"></textarea>
+            </div>
+            <input type="submit" value="Summarize" id="submitButton" class="ui primary right floated button"/>
+            <button type="button" id="clearButton" class="ui basic right floated button" onclick="clearField();">Clear</button>
+        </form>
+    </div>
+</div>
+
+{% if summary %}
+<div class="row">
+    <div class="twelve wide column">
+        <h1>Summary</h1>
+        <div class="ui divider"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="twelve wide column" style="margin-bottom: 30px; font-size: 18px">
+        <ul>
+            {% for sentence in summary %}
+                <li style="margin-bottom: 10px">{{ sentence }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
