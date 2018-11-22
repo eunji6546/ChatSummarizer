@@ -12,11 +12,20 @@ class MactoWin:
         #     f2 = open('chat'+str(j+2)+'.txt', "w", encoding='UTF8')
         
         original_text = text.split('\n')
-        for i in range(len(original_text)):
+        i=0
+        while(len(original_text)>i):
+            if(i>=1 and len(original_text[i].split(']', 2))<3 and original_text[i].split(']', 2)[0] != 2018):
+                original_text[i-1] = original_text[i-1].strip('\n').strip("\r") + " " + original_text[i].strip("\r") +'\n'
+                original_text.pop(i)
+                continue
             original_text[i] = original_text[i]+'\n'
+            i+=1
+        print(original_text)
 
         if(len(original_text[0].split('['))>2 and original_text[0].split('[')[2][0] =='2'):
             return text
+
+
 
         converted =""
         for i in range(len(original_text)):
