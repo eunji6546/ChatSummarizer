@@ -15,9 +15,10 @@ class ChatSummarizer:
 	def __init__(self, input_sentences):
 
 		self.cw = CW_conv.Coinedword(file="../coined_word/coinedword_dic.txt") 
+	
 		print("windows format change to mac format")
-		input_sentences = mactowin.MactoWin().convert(input_sentences)
-		self.ts = TS_conv.Toksen(input_sentences)
+		
+		self.input_sentences = mactowin.MactoWin().convert(input_sentences)
 		
 
 	def preprocess(self):
