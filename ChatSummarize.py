@@ -13,7 +13,9 @@ class ChatSummarizer:
 	summaries = None
 
 	def __init__(self, input_sentences):
+
 		self.cw = CW_conv.Coinedword(file="../coined_word/coinedword_dic.txt") 
+
 		print("windows format change to mac format")
 		
 		self.input_sentences = mactowin.MactoWin().convert(input_sentences)
@@ -47,6 +49,7 @@ class ChatSummarizer:
 
 	def highlight(self, threshold=0.5):
 		print("highlight : return list of chats and scores ")
+
 		lexrank = LexRank()
 		
 		lexrank.summarize(" ".join(self.preprocessed))
@@ -86,12 +89,22 @@ class ChatSummarizer:
 
 		#----
 		threshold = 1/int(scores[-1][0]+1)
+		high_scores=[]
+
+		for line in scores :
+			if line[2] > threshold :
+				high_scores.append(line[2])
+		threshold = sum(high_scores)/len(high_scores)
+
+
 		highlighted_lexsentences = [] 
+
 		return_chat_idx = [] 
 		for line in scores :
 			if line[2] > threshold :
 				highlighted_lexsentences.append(line)
 				return_chat_idx += line[-1]
+
 		i = 0 
 
 		# for line in highlighted_lexsentences :
@@ -101,6 +114,7 @@ class ChatSummarizer:
 		# 		print(self.ts.input[idx])
 		# # print("----")
 		# print ("-----")
+
 		i=0
 		return_chat = [] 
 		for line in self.ts.input:
@@ -108,7 +122,27 @@ class ChatSummarizer:
 				return_chat.append([1, line])
 			else :
 				return_chat.append([0, line])
+			i += 1 
+		del(lexrank)
 		return return_chat
+		
+
+	def include_additional (self, threshold=0.5):
+
+		print("highlight : return list of chats and scores ")
+		lexrank = LexRank()
+		print (self.ts.chat_to_sentence_and_reaction_mapping)
+		input_seq = [x[1]+"." for x in self.ts.chat_to_sentence_and_reaction_mapping]
+		
+		lexrank.summarize(" ".join(input_seq))
+		lexrank_sentences = [x.text for x in lexrank.sentences]
+
+		scores = lexrank.sentence_score_pair()  
+		
+		input_seq = [x.strip().strip(".").strip() for x in input_seq]
+		print(scores)
+		del(lexrank)
+
 		
 		
 		

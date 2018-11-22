@@ -13,7 +13,9 @@ if __name__=="__main__":
 		runner.preprocess()
 		print("preprocess done.")
 		#runner.summarize(4)
-		runner.highlight()
+		# runner.highlight()
+		runner.include_additional()
 		del (runner)
+		# break
 
 		

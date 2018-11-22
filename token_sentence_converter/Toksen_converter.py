@@ -39,6 +39,7 @@ class Toksen:
 	# idx of this list is sentence-index and elements of it is chat-index 
 	# and index start with zero
 	chat_to_sentence_mapping = [] 
+	chat_to_sentence_and_reaction_mapping = [] 
 
 	# Toksen-sentence, rexrank-sentence mapping 
 	toksen_to_lexrank_mapping=[] 
@@ -198,20 +199,20 @@ class Toksen:
 		# 	total.append(message)
 		# 	sentence_idx+=1
 	
-	def as_it_is_addi_v(self):
 
-		self.chat_to_sentence_mapping = []
-		chat_dict={}
-		prev_who = None
-		to_print = ""
-		total= []
-		chat_idx = 0
-		sentence_idx = 0 
-		chat_idxs_of_cur_sentence = []
+	def reaction_add (self):
+
+		self.with_reaction = [] 
+		sentences = self.chat_to_sentence_mapping[:]
+
+		s_idx = 0 
+		new_sentence = ""
+		new_sentences = [] 
 
 		for line in self.input :
-	
-
+			# print ("====")
+			if s_idx+1 >= len(sentences):
+				break; 
 			line = line.strip(" ").strip()
 			try :
 				who, when, what = line.split("]") 
@@ -221,9 +222,25 @@ class Toksen:
 			who = who.strip(" [").strip("] ") 
 			when = when.strip(" [").strip("] ") 
 			what = what.strip()
-			
-			if self.__is_emoticon (what) or self.__is_short_reaction (what) : 
-				print(what) 
+
+			raw_what = what[:].replace(".","")	
+
+			what = self.noise_detector.remove(what).strip()
+
+			if sentences[s_idx+1][-1].strip("").startswith(what):
+				# print ("append", new_sentence)
+				new_sentences.append([s_idx, new_sentence])
+				s_idx +=1 
+				new_sentence = raw_what
+			else : 
+				# print ("adding...", raw_what)
+				new_sentence += " "+raw_what
+		new_sentences.append([s_idx, new_sentence])
+		assert (len(new_sentences) == len(sentences))
+		self.with_reaction = new_sentences
+
+		# last line 
+
 
 	def as_it_is (self):
 		self.chat_to_sentence_mapping = []
@@ -235,6 +252,9 @@ class Toksen:
 		sentence_idx = 0 
 		chat_idxs_of_cur_sentence = []
 
+		curr_core_sentence_idx = -1
+		with_reaction = ""
+
 		for line in self.input :
 	
 
@@ -247,11 +267,9 @@ class Toksen:
 			who = who.strip(" [").strip("] ") 
 			when = when.strip(" [").strip("] ") 
 			what = what.strip()
-			raw_what = what[:]	
+			raw_what = what[:].replace(".","")	
 			what = self.noise_detector.remove(what)
 			
-			if self.__is_emoticon (raw_what) or self.__is_short_reaction (raw_what) : 
-				pass
 			if prev_who != who :
 				#print(to_print)
 				if prev_who != None and len(to_print) !=0 :
@@ -265,7 +283,6 @@ class Toksen:
 							total.append(to_print )  
 						else :
 							total.append(to_print + ".")
-					
 
 				to_print = what 
 
@@ -277,13 +294,28 @@ class Toksen:
 			prev_who = who 
 			chat_idx += 1 
 
+			if self.__is_emoticon (raw_what) or self.__is_short_reaction (raw_what) : 
+					with_reaction += " "+raw_what 
+
+			else :
+				if curr_core_sentence_idx >=0 : 
+					self.chat_to_sentence_and_reaction_mapping.append([curr_core_sentence_idx ,with_reaction])
+				with_reaction = raw_what
+				curr_core_sentence_idx = sentence_idx
+
+
 		# last line 
 		if len(to_print) >0 : 
 			total.append(to_print.strip())
 		self.chat_to_sentence_mapping.append([sentence_idx, chat_idxs_of_cur_sentence, to_print+"."])
+		self.chat_to_sentence_and_reaction_mapping.append([curr_core_sentence_idx ,with_reaction])
 		self.toksen = total
-		
-		return total 
+		print(self.chat_to_sentence_mapping)
+		# print("==total==")
+		# print(total)
+		self.reaction_add()
+		return total
+
 	
 	
 			
