@@ -2,7 +2,7 @@ import os
 import sys 
 
 class NoiseDetector:
-    def __init__(self, file="./noise_detector/noise_dictionary.txt"):
+    def __init__(self, file="../noise_detector/noise_dictionary.txt"):
         self.dic = {}
         with open(file, 'r', encoding= 'UTF8') as f:
             self.noises = f.readlines()

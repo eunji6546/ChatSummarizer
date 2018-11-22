@@ -1,9 +1,10 @@
 from coined_word import coinedword as CW_conv 
 from token_sentence_converter import Toksen_converter as TS_conv
 import os
+import sys 
 from hanspell import spell_checker as sc
 from mactowin import mactowin
-
+sys.path.insert(0,os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from lexrankr import LexRank
 
 class ChatSummarizer:
@@ -12,7 +13,7 @@ class ChatSummarizer:
 	summaries = None
 
 	def __init__(self, input_sentences):
-		self.cw = CW_conv.Coinedword(file="./coined_word/coinedword_dic.txt") 
+		self.cw = CW_conv.Coinedword(file="../coined_word/coinedword_dic.txt") 
 		print("windows format change to mac format")
 		
 		self.input_sentences = mactowin.MactoWin().convert(input_sentences)
