@@ -1,10 +1,13 @@
+import sys 
+import os 
+sys.path.insert(0,os.path.dirname(os.path.abspath(os.path.dirname(__file__)))) 
 import ChatSummarize as ChatSum
 
 if __name__=="__main__":
 	for i in range(22):
 		if i == 0 or i == 1 or i == 4:
 			continue
-		with open("./sample_data/chat%d.txt" %i, 'r', encoding='utf-8-sig')as f:
+		with open("../sample_data/chat%d.txt" %i, 'r', encoding='utf-8-sig')as f:
 			lines = f.readlines()
 
 		input_sentences = "".join(lines)
@@ -13,9 +16,9 @@ if __name__=="__main__":
 		runner.preprocess()
 		print("preprocess done.")
 		#runner.summarize(4)
-		# runner.highlight()
+		runner.highlight()
 		runner.include_additional()
 		del (runner)
-		# break
+		break
 
 		
