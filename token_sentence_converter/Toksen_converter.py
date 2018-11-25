@@ -26,7 +26,7 @@ def check_time(first, second):
     second_hour = int(second[1][1].split(':')[0])
     second_minute = int(second[1][1].split(':')[1])
     
-    if first_hour == second_hour and first_minute == second_minute-1:
+    if first_hour == second_hour and first_minute == second_minute - 1:
         return 1
     
     else:
@@ -54,7 +54,7 @@ class Toksen:
 	def __is_emoticon(self, chat):
 		return "이모티콘" in chat 
 	def __is_short_reaction (self, chat):	
-		return len(set(chat))<3 
+		return len(set(chat)) < 3 
 	def __remove_kk(self, chat):
 		tok_list = ["ㅋ","ㅎ","?","!",".","ㅠ","@","ㅐ","ㅣ",'~','^',"ㅠ_ㅠ",":)",";"\
 		"ㅛ","ㅜ", "ㄹ",":<"]
@@ -68,7 +68,7 @@ class Toksen:
 	# -- tok-sen connecting methods : choose one 
 
 
-	def by_person_only(self) :
+	def by_person_only(self):
 		"""
 		input : filename to read
 		output : dictionary of {"who":"chat"} 
@@ -80,12 +80,12 @@ class Toksen:
 			line = line.strip(" ").strip()
 			if line[0] != "[" :
 				# means yymmdd 
-				continue;
+				continue
 			try :
 				who, when, what = line.split("]") 
 			except:
 				print("ELSE CASE : split ]") 
-				continue;
+				continue
 			who = who.strip(" [").strip("] ") 
 			when = when.strip(" [").strip("] ") 
 			what = what.strip() 
@@ -98,9 +98,9 @@ class Toksen:
 				chat_dict[who][when].append(what)
 			"""
 			if not when in chat_dict.keys():
-				chat_dict[when]={}
+				chat_dict[when] = {}
 			if not who in chat_dict[when].keys():
-				chat_dict[when][who]=[what]
+				chat_dict[when][who] = [what]
 			else :
 				chat_dict[when][who].append(what)
 		print (chat_dict)
@@ -114,7 +114,7 @@ class Toksen:
 		for i in range(len(original)):
 			new = []
 			splited = original[i].split(']', 2)
-			if(len(splited)<2):
+			if(len(splited) < 2):
 				original.pop(i)
 				break
 
@@ -129,27 +129,27 @@ class Toksen:
 		    
 			original[i] = new
 		
-		sentence_idx =0
+		sentence_idx = 0
 		location = 0
-		visited=[]
-		while(location <len(original)):
-			i=1
+		visited = []
+		while(location < len(original)):
+			i = 1
 			index_list = [location]
 			visited.append(location)
-			message =""
-			count =0
+			message = ""
+			count = 0
 			
-			while(i+location<len(original) and check_time(original[i+location], original[location]) == 0):
-				if(check_name(original[location], original[location+i])):
-					index_list.append(i+location)
-					visited.append(i+location)
-					count=0;
+			while(i + location<len(original) and check_time(original[i + location], original[location]) == 0):
+				if(check_name(original[location], original[location + i])):
+					index_list.append(i + location)
+					visited.append(i + location)
+					count = 0
 				else:
-					count+=1
+					count += 1
 				
-				if count>=3:
+				if count >= 3:
 					break
-				i+=1
+				i += 1
 
 			# while(i+location<len(original) and check_time(original[i+location], original[location]) ==1):
 			# 	if(check_name(original[0], original[i+location])):
@@ -160,18 +160,18 @@ class Toksen:
 			# 		break
 
 			for i in index_list:
-				message = message + ' ' +self.noise_detector.remove(original[i][2]) 
+				message = message + ' ' + self.noise_detector.remove(original[i][2]) 
 			
 			while location in visited:
-				location+=1
+				location += 1
 
 			if(message.strip() == ""):
 				continue
 
 			message = message.strip() + '.'
-			self.chat_to_sentence_mapping.append([sentence_idx,index_list,message])
+			self.chat_to_sentence_mapping.append([sentence_idx, index_list, message])
 			total.append(message)
-			sentence_idx+=1
+			sentence_idx += 1
 		return total
 
 		# while(len(original) != 0):
@@ -211,14 +211,14 @@ class Toksen:
 
 		for line in self.input :
 			# print ("====")
-			if s_idx+1 >= len(sentences):
+			if s_idx + 1 >= len(sentences):
 				break; 
 			line = line.strip(" ").strip()
 			try :
 				who, when, what = line.split("]") 
 			except:
 				# print("ELSE CASE : split ]") 
-				continue;
+				continue
 			who = who.strip(" [").strip("] ") 
 			when = when.strip(" [").strip("] ") 
 			what = what.strip()
@@ -227,14 +227,14 @@ class Toksen:
 
 			what = self.noise_detector.remove(what).strip()
 
-			if sentences[s_idx+1][-1].strip("").startswith(what):
+			if sentences[s_idx + 1][-1].strip("").startswith(what):
 				# print ("append", new_sentence)
 				new_sentences.append([s_idx, new_sentence])
-				s_idx +=1 
+				s_idx += 1 
 				new_sentence = raw_what
 			else : 
 				# print ("adding...", raw_what)
-				new_sentence += " "+raw_what
+				new_sentence += " " + raw_what
 		new_sentences.append([s_idx, new_sentence])
 		assert (len(new_sentences) == len(sentences))
 		self.with_reaction = new_sentences
@@ -244,10 +244,10 @@ class Toksen:
 
 	def as_it_is (self):
 		self.chat_to_sentence_mapping = []
-		chat_dict={}
+		chat_dict = {}
 		prev_who = None
 		to_print = ""
-		total= []
+		total = []
 		chat_idx = 0
 		sentence_idx = 0 
 		chat_idxs_of_cur_sentence = []
@@ -256,14 +256,12 @@ class Toksen:
 		with_reaction = ""
 
 		for line in self.input :
-	
-
 			line = line.strip(" ").strip()
 			try :
 				who, when, what = line.split("]") 
 			except:
 				# print("ELSE CASE : split ]") 
-				continue;
+				continue
 			who = who.strip(" [").strip("] ") 
 			when = when.strip(" [").strip("] ") 
 			what = what.strip()
@@ -274,13 +272,13 @@ class Toksen:
 				#print(to_print)
 				if prev_who != None and len(to_print) !=0 :
 					to_print = to_print.strip()
-					self.chat_to_sentence_mapping.append([sentence_idx, chat_idxs_of_cur_sentence,to_print])
+					self.chat_to_sentence_mapping.append([sentence_idx, chat_idxs_of_cur_sentence, to_print])
 					chat_idxs_of_cur_sentence = [] 
-					sentence_idx +=1 
-					if len(to_print) >0 :
-						 
-						if to_print[-1] in ["?","!","."] :
-							total.append(to_print )  
+					sentence_idx += 1 
+
+					if len(to_print) > 0 :
+						if to_print[-1] in ["?", "!", "."] :
+							total.append(to_print)  
 						else :
 							total.append(to_print + ".")
 
@@ -295,28 +293,23 @@ class Toksen:
 			chat_idx += 1 
 
 			if self.__is_emoticon (raw_what) or self.__is_short_reaction (raw_what) : 
-					with_reaction += " "+raw_what 
+					with_reaction += " " + raw_what 
 
 			else :
-				if curr_core_sentence_idx >=0 : 
-					self.chat_to_sentence_and_reaction_mapping.append([curr_core_sentence_idx ,with_reaction])
+				if curr_core_sentence_idx >= 0 : 
+					self.chat_to_sentence_and_reaction_mapping.append([curr_core_sentence_idx, with_reaction])
 				with_reaction = raw_what
 				curr_core_sentence_idx = sentence_idx
 
 
 		# last line 
-		if len(to_print) >0 : 
+		if len(to_print) > 0: 
 			total.append(to_print.strip())
-		self.chat_to_sentence_mapping.append([sentence_idx, chat_idxs_of_cur_sentence, to_print+"."])
-		self.chat_to_sentence_and_reaction_mapping.append([curr_core_sentence_idx ,with_reaction])
+		self.chat_to_sentence_mapping.append([sentence_idx, chat_idxs_of_cur_sentence, to_print + "."])
+		self.chat_to_sentence_and_reaction_mapping.append([curr_core_sentence_idx, with_reaction])
 		self.toksen = total
 		print(self.chat_to_sentence_mapping)
 		# print("==total==")
 		# print(total)
 		self.reaction_add()
 		return total
-
-	
-	
-			
-

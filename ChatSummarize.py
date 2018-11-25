@@ -4,7 +4,8 @@ import os
 import sys 
 from hanspell import spell_checker as sc
 from mactowin import mactowin
-sys.path.insert(0,os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+from noise_detector import noise_detec
+# sys.path.insert(0,os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from lexrankr import LexRank
 
 class ChatSummarizer:
@@ -14,7 +15,7 @@ class ChatSummarizer:
 
 	def __init__(self, input_sentences):
 
-		self.cw = CW_conv.Coinedword(file="../coined_word/coinedword_dic.txt") 
+		self.cw = CW_conv.Coinedword(file="./coined_word/coinedword_dic.txt") 
 	
 		print("windows format change to mac format")
 		
@@ -35,6 +36,7 @@ class ChatSummarizer:
 		self.preprocessed = self.sc_lines 
 		print("doing lexrank ")
 	
+
 	def summarize(self, n_summary):
 		print("summarize in %d sentences" %n_summary)
 		lexrank = LexRank()
@@ -47,6 +49,7 @@ class ChatSummarizer:
 		self.summaries = summaries
 		return summaries
 
+
 	def highlight(self, threshold=0.5):
 		print("highlight : return list of chats and scores ")
 
@@ -58,44 +61,34 @@ class ChatSummarizer:
 		scores = lexrank.sentence_score_pair()  
 		
 		self.preprocessed = [x.strip().strip(".").strip() for x in self.preprocessed]
-		# print(self.preprocessed, len(self.preprocessed))
-		# print(self.ts.chat_to_sentence_mapping, len(self.ts.chat_to_sentence_mapping))
 		lex_idx = 0 
-		skip_amount=0
+		skip_amount = 0
 		jump = 0 
 		for ts_sentence in self.ts.chat_to_sentence_mapping:
 			ts_idx, chat_idxs, sentence = ts_sentence
-			# print ("from ts", ts_idx, ts_sentence )
-			# print ("from output", lex_idx+skip_amount, self.preprocessed[lex_idx+skip_amount])
-			# print ("from scores", lex_idx, scores[lex_idx])
 			
 			if lex_idx >= len(scores): break
 			
 			if len(sentence.strip()) == 0 :
-				jump +=1
+				jump += 1
 			else :
-				if self.preprocessed[lex_idx+skip_amount] != scores[lex_idx][1] : 
-					# print ("not same")
-					#jump += 1 
+				if self.preprocessed[lex_idx + skip_amount] != scores[lex_idx][1] :
 					skip_amount += 1 
-				else :
-					# print("same same ")
-					
+				else :					
 					scores[lex_idx] = list(scores[lex_idx])
-					scores[lex_idx][0] = lex_idx + jump  + skip_amount
+					scores[lex_idx][0] = lex_idx + jump + skip_amount
 					scores[lex_idx].append(chat_idxs)
-					lex_idx +=1; 
+					lex_idx += 1; 
 
 
 		#----
-		threshold = 1/int(scores[-1][0]+1)
+		threshold = 1 / int(scores[-1][0] + 1)
 		high_scores=[]
 
 		for line in scores :
 			if line[2] > threshold :
 				high_scores.append(line[2])
-		threshold = sum(high_scores)/len(high_scores)
-
+		threshold = sum(high_scores) / len(high_scores)
 
 		highlighted_lexsentences = [] 
 
@@ -105,20 +98,16 @@ class ChatSummarizer:
 				highlighted_lexsentences.append(line)
 				return_chat_idx += line[-1]
 
-		i = 0 
-
-		# for line in highlighted_lexsentences :
-		# 	# print ("%d th highlight", i )
-		# 	i+=1
-		# 	for idx in line[-1]:
-		# 		print(self.ts.input[idx])
-		# # print("----")
-		# print ("-----")
-
-		i=0
+		i = 0
 		return_chat = [] 
+		noiseDetec = noise_detec.NoiseDetector()
 		for line in self.ts.input:
 			if i in return_chat_idx:
+				# nd = noiseDetec.remove(line.split("]")[2].strip())
+				# if len(nd) == 0:
+				# 	return_chat.append([0, line])
+				# else:
+				# 	return_chat.append([1, line])
 				return_chat.append([1, line])
 			else :
 				return_chat.append([0, line])
@@ -142,14 +131,3 @@ class ChatSummarizer:
 		input_seq = [x.strip().strip(".").strip() for x in input_seq]
 		print(scores)
 		del(lexrank)
-
-		
-		
-		
-		
-
-
-
-
-		
-
