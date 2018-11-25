@@ -51,6 +51,7 @@ class ChatSummarizer:
 
 
 	def highlight(self, threshold=0.5):
+
 		print("highlight : return list of chats and scores ")
 
 		lexrank = LexRank()
@@ -60,7 +61,8 @@ class ChatSummarizer:
 
 		scores = lexrank.sentence_score_pair()  
 		
-		self.preprocessed = [x.strip().strip(".").strip() for x in self.preprocessed]
+		preprocessed = self.preprocessed[:]
+		preprocessed = [x.strip().strip(".").strip() for x in preprocessed]
 		lex_idx = 0 
 		skip_amount = 0
 		jump = 0 
@@ -72,15 +74,23 @@ class ChatSummarizer:
 			if len(sentence.strip()) == 0 :
 				jump += 1
 			else :
-				if self.preprocessed[lex_idx + skip_amount] != scores[lex_idx][1] :
+				if preprocessed[lex_idx + skip_amount] != scores[lex_idx][1] :
 					skip_amount += 1 
 				else :					
 					scores[lex_idx] = list(scores[lex_idx])
 					scores[lex_idx][0] = lex_idx + jump + skip_amount
 					scores[lex_idx].append(chat_idxs)
 					lex_idx += 1; 
+		self.highlight_lexrank = scores[:]
+		print("highlight result")
+		return_list = self._map_to_chat(self.highlight_lexrank)
+		for chat in return_list :
+			if chat[0] == 1 : 
+				print(chat)
+		return return_list
 
 
+	def _map_to_chat (self, scores):
 		#----
 		threshold = 1 / int(scores[-1][0] + 1)
 		high_scores=[]
@@ -89,8 +99,15 @@ class ChatSummarizer:
 			if line[2] > threshold :
 				high_scores.append(line[2])
 		threshold = sum(high_scores) / len(high_scores)
-
+		
+		more_high = [] 
+		for s in high_scores :
+			if s > threshold :
+				more_high.append(s)
+		threshold = sum(more_high) / len(more_high)
+		
 		highlighted_lexsentences = [] 
+
 
 		return_chat_idx = [] 
 		for line in scores :
@@ -111,22 +128,72 @@ class ChatSummarizer:
 			else :
 				return_chat.append([0, line])
 			i += 1 
-		del(lexrank)
+		self.highlight = return_chat[:]
+
 		return return_chat
 		
 
 	def include_additional (self, threshold=0.5):
 
-		print("highlight : return list of chats and scores ")
+		print("additionals : ")
 		lexrank = LexRank()
-		print (self.ts.chat_to_sentence_and_reaction_mapping)
-		input_seq = [x[1]+"." for x in self.ts.chat_to_sentence_and_reaction_mapping]
+
+		input_seq = [x[1]+"." for x in self.ts.with_reaction]
+		#?? input_seq = [x.strip().strip(".").strip() for x in input_seq]
 		
 		lexrank.summarize(" ".join(input_seq))
 		lexrank_sentences = [x.text for x in lexrank.sentences]
 
 		scores = lexrank.sentence_score_pair()  
+
+		preprocessed = self.preprocessed[:]
+		preprocessed = [x.strip().strip(".").strip() for x in preprocessed]
 		
-		input_seq = [x.strip().strip(".").strip() for x in input_seq]
-		print(scores)
-		del(lexrank)
+		lex_idx = 0 
+		skip_amount = 0
+		jump = 0 
+
+
+		# from scores to reaction index mapping (change scores' index to reactions)
+		
+		for ts_sentence in self.ts.with_reaction:
+			ts_idx, sentence = ts_sentence
+			sentence = sentence.strip(" ")
+			# print (ts_sentence, scores[lex_idx])
+			
+			if lex_idx >= len(scores): break
+			
+			if len(sentence.strip()) == 0 or len(sentence.split(" ")) <2:
+				jump += 1
+			else :
+				if sentence != scores[lex_idx][1] :
+					skip_amount += 1 
+				else :					
+					scores[lex_idx] = list(scores[lex_idx])
+					scores[lex_idx][0] = lex_idx + jump + skip_amount
+					
+					lex_idx += 1; 
+
+		self.additional_lexrank = scores[:]
+		additional_dict = {} 
+		for line in self.additional_lexrank:
+			i, sentence, score = line 
+			additional_dict[i] = score 
+
+		idx = 0 
+		for line in self.highlight_lexrank:
+			i, sentence, score, chat_idxs = line 
+			if i in additional_dict.keys() :
+				self.highlight_lexrank[idx][2] += additional_dict[i]
+				self.highlight_lexrank[idx][2] = self.highlight_lexrank[idx][2] * 0.5
+
+			idx += 1 
+
+		print ("new highlights with reaction")
+		return_list = self._map_to_chat (self.highlight_lexrank)
+		for chat in return_list :
+			if chat[0] == 1 : 
+				print(chat)
+		
+		return return_list
+

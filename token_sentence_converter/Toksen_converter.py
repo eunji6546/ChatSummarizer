@@ -206,10 +206,12 @@ class Toksen:
 		sentences = self.chat_to_sentence_mapping[:]
 
 		s_idx = 0 
+		cnt = 0 
 		new_sentence = ""
 		new_sentences = [] 
 
 		for line in self.input :
+			cnt += 1 
 			# print ("====")
 			if s_idx + 1 >= len(sentences):
 				break; 
@@ -235,11 +237,15 @@ class Toksen:
 			else : 
 				# print ("adding...", raw_what)
 				new_sentence += " " + raw_what
+		if cnt < len(self.input):
+			lines = self.input[cnt-1:]
+			lines = [ x.strip().split("]")[-1] for x in lines]
+			for line in lines :
+				new_sentence += " "+line.strip(" ")
 		new_sentences.append([s_idx, new_sentence])
 		assert (len(new_sentences) == len(sentences))
 		self.with_reaction = new_sentences
 
-		# last line 
 
 
 	def as_it_is (self):
@@ -308,7 +314,7 @@ class Toksen:
 		self.chat_to_sentence_mapping.append([sentence_idx, chat_idxs_of_cur_sentence, to_print + "."])
 		self.chat_to_sentence_and_reaction_mapping.append([curr_core_sentence_idx, with_reaction])
 		self.toksen = total
-		print(self.chat_to_sentence_mapping)
+		# print(self.chat_to_sentence_mapping)
 		# print("==total==")
 		# print(total)
 		self.reaction_add()
