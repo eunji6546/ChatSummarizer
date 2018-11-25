@@ -7,6 +7,7 @@ if __name__=="__main__":
 	for i in range(22):
 		if i == 0 or i == 1 or i == 4:
 			continue
+		i = 21
 		with open("../sample_data/chat%d.txt" %i, 'r', encoding='utf-8-sig')as f:
 			lines = f.readlines()
 
@@ -16,8 +17,9 @@ if __name__=="__main__":
 		runner.preprocess()
 		print("preprocess done.")
 		#runner.summarize(4)
-		runner.highlight()
-		runner.include_additional()
+		#runner.highlight()
+		#runner.include_additional()
+		runner.include_additional_frequency()
 		del (runner)
 		break
 

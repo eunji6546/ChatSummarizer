@@ -15,3 +15,10 @@ class NoiseDetector:
         # if len(text)==1 : return ""
         # if len(text.split(" "))<3 : return ""
         return text
+
+    def detect(self, text):
+        noise_result =[]
+        for noise in self.noises:
+            noise_result.append(text.count(noise))
+
+        return noise_result
