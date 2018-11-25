@@ -319,3 +319,61 @@ class Toksen:
 		# print(total)
 		self.reaction_add()
 		return total
+
+	def reaction_mapping(self):
+
+		self.sentence_reaction_mapping= []
+		self.person_reaction_frequency=[]
+
+		original= self.input[:]
+		for i in range(len(original)):
+			new = []
+			splited = original[i].split(']', 2)
+			if(len(splited)<2):
+				original.pop(i)
+				break
+
+			splited[0] = splited[0].strip(' ')
+			splited[0] = splited[0].strip('[')
+			splited[1] = splited[1].strip(' ')
+			splited[1] = splited[1].strip('[')        
+		    
+			new.append(splited[0]) #name
+			new.append(splited[1].split(' ')) #time
+			new.append(splited[2].strip()) #message
+		    
+			original[i] = new
+		
+		location = 0
+		while(location <len(original)):
+			noise = []
+			noise = self.noise_detector.detect(original[location][2])
+			#print(self.sentence_reaction_mapping)
+			new =[]
+			new.append(location)
+			new.append(original[location][0])
+			noise2 =[]
+			noise2.extend(noise)
+			new.append(noise2)
+			#new = [location, original[location][0],noise]
+			self.sentence_reaction_mapping.append(new)
+			b=0
+			for i in range(len(self.person_reaction_frequency)):
+				if(self.person_reaction_frequency[i][0] == original[location][0]):
+					b=1
+					for j in range(len(self.person_reaction_frequency[i][1])):
+						self.person_reaction_frequency[i][1][j] += noise[j]
+					
+			if b==0:
+				new2=[]
+				new2.append(original[location][0])
+				new2.append(noise)
+				#new2 = [original[location][0], noise]
+				self.person_reaction_frequency.append(new2)
+			
+			location+=1
+
+		#print(self.sentence_reaction_mapping)
+		#print(self.person_reaction_frequency)
+
+	

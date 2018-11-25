@@ -17,8 +17,9 @@ if __name__=="__main__":
 		runner.preprocess()
 		print("preprocess done.")
 		#runner.summarize(4)
-		runner.highlight()
-		runner.include_additional()
+		#runner.highlight()
+		#runner.include_additional()
+		runner.include_additional_frequency()
 		del (runner)
 		break
 
