@@ -2,7 +2,8 @@ from coined_word import coinedword as CW_conv
 from token_sentence_converter import Toksen_converter as TS_conv
 import os
 import sys 
-from hanspell import spell_checker as sc
+# from hanspell import spell_checker as sc
+import spell_check as sc
 from mactowin import mactowin
 from noise_detector import noise_detec
 sys.path.insert(0,os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
@@ -31,8 +32,7 @@ class ChatSummarizer:
 		self.cw_lines = [self.cw.convert(x) for x in self.connected_lines]
 		print("spell checking ")
 		self.sc_lines = [sc.check(x) for x in self.cw_lines]
-		
-		self.sc_lines = [x.checked for x in self.sc_lines]
+		# self.sc_lines = [x.checked for x in self.sc_lines]
 		self.preprocessed = self.sc_lines 
 		print("doing lexrank ")
 	
@@ -86,7 +86,7 @@ class ChatSummarizer:
 		high_scores=[]
 
 		for line in scores :
-			if line[2] > threshold :
+			if line[2] >= threshold :
 				high_scores.append(line[2])
 		threshold = sum(high_scores) / len(high_scores)
 
@@ -94,7 +94,7 @@ class ChatSummarizer:
 
 		return_chat_idx = [] 
 		for line in scores :
-			if line[2] > threshold :
+			if line[2] >= threshold :
 				highlighted_lexsentences.append(line)
 				return_chat_idx += line[-1]
 
