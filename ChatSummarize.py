@@ -5,7 +5,7 @@ import sys
 from hanspell import spell_checker as sc
 from mactowin import mactowin
 from noise_detector import noise_detec
-# sys.path.insert(0,os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+sys.path.insert(0,os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from lexrankr import LexRank
 
 class ChatSummarizer:
@@ -15,7 +15,7 @@ class ChatSummarizer:
 
 	def __init__(self, input_sentences):
 
-		self.cw = CW_conv.Coinedword(file="./coined_word/coinedword_dic.txt") 
+		self.cw = CW_conv.Coinedword(file="../coined_word/coinedword_dic.txt") 
 	
 		print("windows format change to mac format")
 		
@@ -103,12 +103,11 @@ class ChatSummarizer:
 		noiseDetec = noise_detec.NoiseDetector()
 		for line in self.ts.input:
 			if i in return_chat_idx:
-				# nd = noiseDetec.remove(line.split("]")[2].strip())
-				# if len(nd) == 0:
-				# 	return_chat.append([0, line])
-				# else:
-				# 	return_chat.append([1, line])
-				return_chat.append([1, line])
+				nd = noiseDetec.remove(line.split("]")[2].strip())
+				if len(nd) == 0:
+					return_chat.append([0, line])
+				else:
+					return_chat.append([1, line])
 			else :
 				return_chat.append([0, line])
 			i += 1 
