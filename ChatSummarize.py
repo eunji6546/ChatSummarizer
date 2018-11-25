@@ -2,8 +2,8 @@ from coined_word import coinedword as CW_conv
 from token_sentence_converter import Toksen_converter as TS_conv
 import os
 import sys 
-# from hanspell import spell_checker as sc
-import spell_check as sc
+from hanspell import spell_checker as sc
+# import spell_check as sc
 from mactowin import mactowin
 from noise_detector import noise_detec
 sys.path.insert(0,os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
@@ -29,13 +29,13 @@ class ChatSummarizer:
 
 		print("connected as sentences ")
 		self.ts = TS_conv.Toksen(self.input_sentences)
-		#self.connected_lines = self.ts.as_it_is()
-		self.ts.reaction_mapping()
+		self.connected_lines = self.ts.as_it_is()
+		#self.ts.reaction_mapping()
 		self.connected_lines = self.ts.by_time_connect()
 		self.cw_lines = [self.cw.convert(x) for x in self.connected_lines]
 		print("spell checking ")
 		self.sc_lines = [sc.check(x) for x in self.cw_lines]
-		# self.sc_lines = [x.checked for x in self.sc_lines]
+		self.sc_lines = [x.checked for x in self.sc_lines]
 		self.preprocessed = self.sc_lines 
 		print("doing lexrank ")
 	
@@ -102,6 +102,8 @@ class ChatSummarizer:
 			if line[2] >= threshold :
 				high_scores.append(line[2])
 		threshold = sum(high_scores) / len(high_scores)
+
+		# threshold = (threshold + temp) / 2
 		
 		# more_high = [] 
 		# for s in high_scores :
@@ -186,7 +188,7 @@ class ChatSummarizer:
 			i, sentence, score, chat_idxs = line 
 			if i in additional_dict.keys() :
 				self.highlight_lexrank[idx][2] += additional_dict[i]
-				self.highlight_lexrank[idx][2] = self.highlight_lexrank[idx][2] * 0.5
+				self.highlight_lexrank[idx][2] = self.highlight_lexrank[idx][2] * 0.8
 
 			idx += 1 
 
@@ -280,15 +282,15 @@ class ChatSummarizer:
 					scores[lex_idx] = list(scores[lex_idx])
 					scores[lex_idx][0] = lex_idx + jump + skip_amount
 					scores[lex_idx].append(chat_idxs)
-					lex_idx += 1;
+					lex_idx += 1
 
 		for i in range(len(result)):
 			for j in range(len(scores)):
 				if i in scores[j][3]:
-					scores[j][2]+=result[i]*0.2
+					scores[j][2]+=result[i]*0.1
 					break
 		for j in range(len(scores)):
-			scores[j][2] = scores[j][2]/1.2
+			scores[j][2] = scores[j][2]/1.1
 		print(scores)
 
 		self.highlight_lexrank = scores[:]
